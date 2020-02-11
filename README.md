@@ -4,7 +4,7 @@
 
 This is an application that can be used to write, save, and delete notes. This application uses an express backend and saves and retrieves note data from a JSON file.
 
-## URL to 
+## URL to application on Heroku
 https://agile-peak-63140.herokuapp.com/
 
 ## Instructions
