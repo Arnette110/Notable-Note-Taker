@@ -1,5 +1,4 @@
 var express = require("express");
-
 var path = require("path");
 const fs = require("fs");
 
@@ -30,11 +29,12 @@ app.get("/notes", (req, res) => {
     ));
 });
 
+// api routes
 app.get("/api/notes", (req, res) => {
   res.sendFile(path.resolve(__dirname, "./db/db.json"));
 });
 
-// POST `/api/notes` - Should receive a new note to save on the request body, add it to the `db.json` file, and then return the new note to the client.
+//  receives a new note to save on the request body, adds it to the `db.json` file, and then returns the new note to the client.
 app.post("/api/notes", (req, res) => {
   let note = req.body;
   // console.log(note);
@@ -51,7 +51,7 @@ app.post("/api/notes", (req, res) => {
     db.forEach(element => {
       element.id = dbIDKey++;
     });
-
+    // write new dv.json file
     fs.writeFile("./db/db.json", JSON.stringify(db), err => {
       if (err) throw err;
       return res.status(200).send("Note Added");
@@ -59,18 +59,18 @@ app.post("/api/notes", (req, res) => {
   });
 });
 
-// DELETE `/api/notes/:id` - Should receive a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
+// receives a query parameter containing the id of a note to delete. This means you'll need to find a way to give each note a unique `id` when it's saved. In order to delete a note, you'll need to read all notes from the `db.json` file, remove the note with the given `id` property, and then rewrite the notes to the `db.json` file.
 app.delete("/api/notes/:id", (req, res) => {
   // read the db.json file
   fs.readFile("./db/db.json", "utf-8", (err, data) =>{
     if (err) throw err;
     // parse the db data
     let db = JSON.parse(data);
-
+    // set id so it can be cross referenced later
     let dbID = parseInt(req.params.id);
-    
+    // filters out objects that no longer have a matching id
     let updatedDB = db.filter(Object => Object.id !== dbID);
-    
+    // write new updated db.json after an item has been deleted
     fs.writeFile("./db/db.json", JSON.stringify(updatedDB), err => {
       if (err) throw err;
       return res.status(200).send("Note Deleted");
